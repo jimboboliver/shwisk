@@ -1,0 +1,407 @@
+### Page state
+- Page URL: https://www.whiskystats.com/whisky/1
+- Page Title: Balvenie 12-year-old - Market Value and Price Insights - Whiskystats
+- Page Snapshot:
+```yaml
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - navigation [ref=e4]:
+      - generic [ref=e6]:
+        - link "Whiskystats" [ref=e8] [cursor=pointer]:
+          - /url: /
+          - img "Whiskystats" [ref=e9]
+        - generic [ref=e11]:
+          - generic [ref=e12]: "@lang('menu.Search')"
+          - generic [ref=e13]:
+            - generic:
+              - img
+            - searchbox "@lang('menu.Search')" [ref=e14]
+        - button "Open user menu" [ref=e16] [cursor=pointer]:
+          - generic [ref=e17]: Open user menu
+          - img [ref=e18]
+    - generic [ref=e20]:
+      - generic [ref=e24]:
+        - generic [ref=e25]:
+          - text: We use cookies to improve your online experience. By using this site, you consent to this use as described in our
+          - link "Privacy policy" [ref=e26] [cursor=pointer]:
+            - /url: /privacy
+          - text: .
+        - link "Ok" [ref=e28] [cursor=pointer]:
+          - /url: https://www.whiskystats.com/cookie-consent?allow_tracking=1
+      - main [ref=e29]:
+        - generic [ref=e32]:
+          - generic [ref=e33]:
+            - generic [ref=e35]:
+              - generic [ref=e36]:
+                - generic [ref=e37]:
+                  - navigation "Breadcrumb" [ref=e38]:
+                    - list [ref=e39]:
+                      - listitem [ref=e40]:
+                        - link "Home" [ref=e42] [cursor=pointer]:
+                          - /url: /
+                      - listitem [ref=e43]:
+                        - generic [ref=e44]:
+                          - img [ref=e45]
+                          - link "Balvenie DoubleWood" [ref=e47]:
+                            - /url: "#"
+                  - heading "Balvenie 12-year-old" [level=1] [ref=e49]
+                - generic [ref=e50]:
+                  - button "Notify" [expanded] [ref=e54] [cursor=pointer]:
+                    - img [ref=e55]
+                    - generic [ref=e57]: Notify
+                  - button "Add" [expanded] [ref=e61] [cursor=pointer]:
+                    - img [ref=e62]
+                    - generic [ref=e64]: Add
+                  - button [expanded] [ref=e68] [cursor=pointer]:
+                    - img [ref=e69]
+              - generic [ref=e72]:
+                - generic [ref=e74]:
+                  - img "WB1" [ref=e75]
+                  - generic [ref=e76]: WB1
+                - link "in whisky group BG2935 in whisky group BG2935" [ref=e78] [cursor=pointer]:
+                  - /url: /whiskygroup/2935
+                  - img "in whisky group BG2935" [ref=e79]
+                  - generic [ref=e80]: in whisky group BG2935
+            - generic [ref=e82]:
+              - img "Bottle photo of 12-year-old" [ref=e84] [cursor=pointer]
+              - generic [ref=e86]:
+                - generic [ref=e87] [cursor=pointer]:
+                  - generic [ref=e88]:
+                    - text: Market Value
+                    - img [ref=e89]
+                  - generic [ref=e91]: no auction prices
+                - generic [ref=e92] [cursor=pointer]:
+                  - generic [ref=e93]:
+                    - text: Retail Price
+                    - img [ref=e94]
+                  - generic [ref=e96]:
+                    - text: €109
+                    - generic [ref=e97]: Dec 27, 2025
+                  - link "2 retail listings →" [ref=e102]:
+                    - /url: "#shops_header"
+                    - img [ref=e103]
+                    - text: 2 retail listings →
+                - generic [ref=e105] [cursor=pointer]:
+                  - generic [ref=e106]:
+                    - text: Rating
+                    - img [ref=e107]
+                  - generic [ref=e109]: 82/100
+          - generic [ref=e195]:
+            - navigation "Tabs" [ref=e200]:
+              - button "Whisky" [ref=e201] [cursor=pointer]
+              - button "Auctions 0" [ref=e202] [cursor=pointer]:
+                - text: Auctions
+                - generic [ref=e203]: "0"
+              - button "Retail 19" [ref=e204] [cursor=pointer]:
+                - text: Retail
+                - generic [ref=e205]: "19"
+              - button "Ratings 414" [ref=e206] [cursor=pointer]:
+                - text: Ratings
+                - generic [ref=e207]: "414"
+              - button "Availability 2" [ref=e208] [cursor=pointer]:
+                - text: Availability
+                - generic [ref=e209]: "2"
+            - generic [ref=e210]:
+              - generic [ref=e211]:
+                - generic [ref=e214]: Whisky Details
+                - generic [ref=e216]:
+                  - generic [ref=e218]:
+                    - generic [ref=e220]:
+                      - generic [ref=e221]:
+                        - generic [ref=e222]: Whisky ID
+                        - generic [ref=e223]: WB1
+                      - generic [ref=e224]:
+                        - generic [ref=e225]: Category
+                        - generic [ref=e226]: Single Malt
+                      - generic [ref=e227]:
+                        - generic [ref=e228]: Distillery
+                        - generic [ref=e229]: Balvenie
+                      - generic [ref=e230]:
+                        - generic [ref=e231]: Bottler
+                        - generic [ref=e232]: Distillery Bottling
+                      - generic [ref=e233]:
+                        - generic [ref=e234]: Bottling serie
+                        - generic [ref=e235]: DoubleWood
+                      - generic [ref=e236]:
+                        - generic [ref=e237]: Bottled
+                        - generic [ref=e238]: 90s
+                      - generic [ref=e239]:
+                        - generic [ref=e240]: Stated Age
+                        - generic [ref=e241]: 12 years old
+                      - generic [ref=e242]:
+                        - generic [ref=e243]: Casktype
+                        - generic [ref=e244]: Sherry Cask Finish
+                      - generic [ref=e245]:
+                        - generic [ref=e246]: Strength
+                        - generic [ref=e247]: 40.00 %vol
+                      - generic [ref=e248]:
+                        - generic [ref=e249]: Size
+                        - generic [ref=e250]: 700 ml
+                      - generic [ref=e251]:
+                        - generic [ref=e252]: Barcode
+                        - generic [ref=e253]: "5010327505138"
+                    - link "Whisky information and images provided by Whiskybase" [ref=e255] [cursor=pointer]:
+                      - /url: https://www.whiskybase.com/whiskies/whisky/1
+                      - generic [ref=e256]: Whisky information and images provided by
+                      - generic [ref=e257]:
+                        - text: Whiskybase
+                        - img [ref=e258]
+                  - generic [ref=e260]:
+                    - tablist [ref=e262]:
+                      - tab "Small bottle photo of Balvenie 12-year-old" [selected] [ref=e263] [cursor=pointer]:
+                        - img "Small bottle photo of Balvenie 12-year-old" [ref=e265]
+                      - tab "Small bottle photo of Balvenie 12-year-old" [ref=e266] [cursor=pointer]:
+                        - img "Small bottle photo of Balvenie 12-year-old" [ref=e268]
+                      - tab "Small bottle photo of Balvenie 12-year-old" [ref=e269] [cursor=pointer]:
+                        - img "Small bottle photo of Balvenie 12-year-old" [ref=e271]
+                      - tab "Small bottle photo of Balvenie 12-year-old" [ref=e272] [cursor=pointer]:
+                        - img "Small bottle photo of Balvenie 12-year-old" [ref=e274]
+                    - tabpanel "Small bottle photo of Balvenie 12-year-old" [ref=e276]:
+                      - img "Bottle photo of Balvenie 12-year-old" [ref=e277] [cursor=pointer]
+              - generic [ref=e278]:
+                - generic [ref=e281]:
+                  - text: Whisky Group
+                  - img [ref=e282]
+                - table [ref=e289]:
+                  - rowgroup [ref=e290]:
+                    - row "Name Age Vintage Bottled Market Value Retail Price" [ref=e291]:
+                      - columnheader [ref=e292] [cursor=pointer]
+                      - columnheader "Name" [ref=e293] [cursor=pointer]
+                      - columnheader "Age" [ref=e294] [cursor=pointer]
+                      - columnheader "Vintage" [ref=e295] [cursor=pointer]
+                      - columnheader "Bottled" [ref=e296] [cursor=pointer]
+                      - columnheader "Market Value" [ref=e297] [cursor=pointer]
+                      - columnheader "Retail Price" [ref=e298] [cursor=pointer]
+                  - rowgroup [ref=e299]:
+                    - row [ref=e300]:
+                      - cell [ref=e301]
+                    - row "Small bottle photo of Balvenie 12-year-old open whisky page for Small bottle photo of Balvenie 12-year-old open whisky page for Small bottle photo of Balvenie 12-year-old open whisky page for Small bottle photo of Balvenie 12-year-old open whisky page for Small bottle photo of Balvenie 12-year-old open whisky page for Small bottle photo of Balvenie 12-year-old open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e302] [cursor=pointer]:
+                      - cell "Small bottle photo of Balvenie 12-year-old" [ref=e303]:
+                        - img "Small bottle photo of Balvenie 12-year-old" [ref=e305]
+                      - cell "open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e306]:
+                        - link "open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e307]:
+                          - /url: /whisky/18338
+                          - generic [ref=e308]:
+                            - img "icon" [ref=e309]
+                            - generic [ref=e310]: WB18338
+                          - generic [ref=e311]: Balvenie 12-year-old DoubleWood
+                          - generic [ref=e312]:
+                            - generic [ref=e313]:
+                              - generic "strength" [ref=e314]: 40,00
+                              - generic "strength unit" [ref=e315]: "%vol"
+                            - generic "strength unit" [ref=e316]: 700ml
+                      - cell "open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e317]:
+                        - link "open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e318]:
+                          - /url: /whisky/18338
+                          - generic [ref=e319]: "12"
+                      - cell "open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e320]:
+                        - link "open whisky page for Small bottle photo of Balvenie 12-year-old":
+                          - /url: /whisky/18338
+                      - cell "open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e321]:
+                        - link "open whisky page for Small bottle photo of Balvenie 12-year-old":
+                          - /url: /whisky/18338
+                      - cell "open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e322]:
+                        - link "open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e323]:
+                          - /url: /whisky/18338
+                          - generic [ref=e325]: € 55
+                          - generic [ref=e326]:
+                            - text: Nov 11, 2023
+                            - img [ref=e328]
+                      - cell "open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e330]:
+                        - link "open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e331]:
+                          - /url: /whisky/18338
+                          - generic [ref=e333]: € 98
+                    - row "Small bottle photo of Balvenie 12-year-old open whisky page for Small bottle photo of Balvenie 12-year-old open whisky page for Small bottle photo of Balvenie 12-year-old open whisky page for Small bottle photo of Balvenie 12-year-old open whisky page for Small bottle photo of Balvenie 12-year-old open whisky page for Small bottle photo of Balvenie 12-year-old open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e335] [cursor=pointer]:
+                      - cell "Small bottle photo of Balvenie 12-year-old" [ref=e336]:
+                        - img "Small bottle photo of Balvenie 12-year-old" [ref=e338]
+                      - cell "open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e339]:
+                        - link "open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e340]:
+                          - /url: /whisky/126965
+                          - generic [ref=e341]:
+                            - img "icon" [ref=e342]
+                            - generic [ref=e343]: WB126965
+                          - generic [ref=e344]: Balvenie 12-year-old DoubleWood
+                          - generic [ref=e345]:
+                            - generic [ref=e346]:
+                              - generic "strength" [ref=e347]: 40,00
+                              - generic "strength unit" [ref=e348]: "%vol"
+                            - generic "strength unit" [ref=e349]: 700ml
+                          - generic [ref=e350]: L6P 6940 1611 5010327505138
+                      - cell "open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e351]:
+                        - link "open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e352]:
+                          - /url: /whisky/126965
+                          - generic [ref=e353]: "12"
+                      - cell "open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e354]:
+                        - link "open whisky page for Small bottle photo of Balvenie 12-year-old":
+                          - /url: /whisky/126965
+                      - cell "open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e355]:
+                        - link "open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e356]:
+                          - /url: /whisky/126965
+                          - generic [ref=e357]: "2005"
+                      - cell "open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e358]:
+                        - link "open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e359]:
+                          - /url: /whisky/126965
+                      - cell "open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e361]:
+                        - link "open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e362]:
+                          - /url: /whisky/126965
+                    - row "Small bottle photo of Balvenie 12-year-old open whisky page for Small bottle photo of Balvenie 12-year-old open whisky page for Small bottle photo of Balvenie 12-year-old open whisky page for Small bottle photo of Balvenie 12-year-old open whisky page for Small bottle photo of Balvenie 12-year-old open whisky page for Small bottle photo of Balvenie 12-year-old open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e364] [cursor=pointer]:
+                      - cell "Small bottle photo of Balvenie 12-year-old" [ref=e365]:
+                        - img "Small bottle photo of Balvenie 12-year-old" [ref=e367]
+                      - cell "open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e368]:
+                        - link "open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e369]:
+                          - /url: /whisky/207189
+                          - generic [ref=e370]:
+                            - img "icon" [ref=e371]
+                            - generic [ref=e372]: WB207189
+                          - generic [ref=e373]: Balvenie 12-year-old Doublewood (Matured In Two Casks)
+                          - generic [ref=e374]: (Pet. Weinbeck Nachf. GmbH)
+                          - generic [ref=e375]:
+                            - generic [ref=e376]:
+                              - generic "strength" [ref=e377]: 40,00
+                              - generic "strength unit" [ref=e378]: "%vol"
+                            - generic "strength unit" [ref=e379]: 700ml
+                          - generic [ref=e380]: L6N 6741 2209 5010327505138
+                      - cell "open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e381]:
+                        - link "open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e382]:
+                          - /url: /whisky/207189
+                          - generic [ref=e383]: "12"
+                      - cell "open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e384]:
+                        - link "open whisky page for Small bottle photo of Balvenie 12-year-old":
+                          - /url: /whisky/207189
+                      - cell "open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e385]:
+                        - link "open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e386]:
+                          - /url: /whisky/207189
+                          - generic [ref=e387]: "2003"
+                      - cell "open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e388]:
+                        - link "open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e389]:
+                          - /url: /whisky/207189
+                      - cell "open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e391]:
+                        - link "open whisky page for Small bottle photo of Balvenie 12-year-old" [ref=e392]:
+                          - /url: /whisky/207189
+                - generic [ref=e396]:
+                  - paragraph [ref=e398]: Showing 1 to 3 of 3 whiskies
+                  - navigation "Pagination" [ref=e400]:
+                    - button "1" [ref=e403] [cursor=pointer]
+              - generic [ref=e406]: Other Versions
+              - table [ref=e412]:
+                - rowgroup [ref=e413]:
+                  - row "Name Age Vintage Bottled Market Value Retail Price" [ref=e414]:
+                    - columnheader [ref=e415] [cursor=pointer]
+                    - columnheader "Name" [ref=e416] [cursor=pointer]:
+                      - text: Name
+                      - img [ref=e417]
+                    - columnheader "Age" [ref=e419] [cursor=pointer]:
+                      - text: Age
+                      - img [ref=e420]
+                    - columnheader "Vintage" [ref=e422] [cursor=pointer]:
+                      - text: Vintage
+                      - img [ref=e423]
+                    - columnheader "Bottled" [ref=e425] [cursor=pointer]:
+                      - text: Bottled
+                      - img [ref=e426]
+                    - columnheader "Market Value" [ref=e428] [cursor=pointer]:
+                      - text: Market Value
+                      - img [ref=e429]
+                    - columnheader "Retail Price" [ref=e431] [cursor=pointer]:
+                      - text: Retail Price
+                      - img [ref=e432]
+                - rowgroup [ref=e434]:
+                  - row [ref=e435]:
+                    - cell [ref=e436]
+  - contentinfo "Footer" [ref=e110]:
+    - heading "Footer" [level=2] [ref=e111]
+    - generic [ref=e112]:
+      - generic [ref=e113]:
+        - generic [ref=e114]:
+          - generic [ref=e115]:
+            - generic [ref=e116]:
+              - heading "Solutions" [level=3] [ref=e117]
+              - list [ref=e118]:
+                - listitem [ref=e119]:
+                  - link "Brand and distillers" [ref=e120] [cursor=pointer]:
+                    - /url: /services#section_0
+                - listitem [ref=e121]:
+                  - link "Auction houses" [ref=e122] [cursor=pointer]:
+                    - /url: /services#section_1
+                - listitem [ref=e123]:
+                  - link "Retailers" [ref=e124] [cursor=pointer]:
+                    - /url: /services#section_2
+                - listitem [ref=e125]:
+                  - link "Investors and consultants" [ref=e126] [cursor=pointer]:
+                    - /url: /services#section_3
+                - listitem [ref=e127]:
+                  - link "Whisky pricing" [ref=e128] [cursor=pointer]:
+                    - /url: https://www.whiskystats.com/whisky-pricing
+            - generic [ref=e129]:
+              - heading "Support" [level=3] [ref=e130]
+              - list [ref=e131]:
+                - listitem [ref=e132]:
+                  - link "Pricing" [ref=e133] [cursor=pointer]:
+                    - /url: /pricing
+                - listitem [ref=e134]:
+                  - link "FAQs" [ref=e135] [cursor=pointer]:
+                    - /url: https://support.whiskystats.com/support/home
+                - listitem [ref=e136]:
+                  - link "Help" [ref=e137] [cursor=pointer]:
+                    - /url: https://support.whiskystats.com/support/home
+                - listitem [ref=e138]:
+                  - link "Report a problem" [ref=e139] [cursor=pointer]:
+                    - /url: https://whiskystats.myfreshworks.com/login/auth/1654167985086?client_id=78368727158800390&redirect_uri=https://support.whiskystats.com/freshid/customer_authorize_callback
+          - generic [ref=e140]:
+            - generic [ref=e141]:
+              - heading "Company" [level=3] [ref=e142]
+              - list [ref=e143]:
+                - listitem [ref=e144]:
+                  - link "About" [ref=e145] [cursor=pointer]:
+                    - /url: https://www.whiskystats.com/about
+                - listitem [ref=e146]:
+                  - link "News & Insights" [ref=e147] [cursor=pointer]:
+                    - /url: https://www.whiskystats.com/news
+            - generic [ref=e148]:
+              - heading "Legal" [level=3] [ref=e149]
+              - list [ref=e150]:
+                - listitem [ref=e151]:
+                  - link "Privacy" [ref=e152] [cursor=pointer]:
+                    - /url: https://www.whiskystats.com/privacy
+                - listitem [ref=e153]:
+                  - link "Terms" [ref=e154] [cursor=pointer]:
+                    - /url: https://www.whiskystats.com/terms
+        - generic [ref=e155]:
+          - table [ref=e156]:
+            - rowgroup [ref=e157]:
+              - row "Whiskystats B.V." [ref=e158]:
+                - cell "Whiskystats B.V." [ref=e159]
+              - row "Zwaanshals 530" [ref=e160]:
+                - cell "Zwaanshals 530" [ref=e161]
+              - row "3035 KS Rotterdam" [ref=e162]:
+                - cell "3035 KS Rotterdam" [ref=e163]
+              - row "The Netherlands" [ref=e164]:
+                - cell "The Netherlands" [ref=e165]
+              - row [ref=e166]:
+                - cell [ref=e167]
+              - 'row "VAT: NL862211001B01" [ref=e168]':
+                - 'cell "VAT: NL862211001B01" [ref=e169]'
+              - row "info@whiskystats.com" [ref=e170]:
+                - cell "info@whiskystats.com" [ref=e171]
+          - heading "Join our mailing list" [level=3] [ref=e172]
+          - paragraph [ref=e173]: The latest news, insights and resources sent to your inbox.
+          - generic [ref=e174]:
+            - generic [ref=e175]: Email address
+            - textbox "Enter your email" [ref=e176]
+            - button "Subscribe" [ref=e178] [cursor=pointer]
+      - generic [ref=e179]:
+        - generic [ref=e180]:
+          - link "Linkedin" [ref=e181] [cursor=pointer]:
+            - /url: https://www.linkedin.com/company/28800729
+            - generic [ref=e182]: Linkedin
+            - img [ref=e183]
+          - link "Instagram" [ref=e185] [cursor=pointer]:
+            - /url: https://www.instagram.com/whiskystats/
+            - generic [ref=e186]: Instagram
+            - img [ref=e187]
+          - link "Twitter" [ref=e189] [cursor=pointer]:
+            - /url: https://twitter.com/whiskystats
+            - generic [ref=e190]: Twitter
+            - img [ref=e191]
+        - paragraph [ref=e193]: © 2025 Whiskystats. All rights reserved. 1.23.1
+```

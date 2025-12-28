@@ -17,7 +17,7 @@ The dual-platform approach leverages mobile devices for convenient menu photogra
 
 - **React 19** - UI framework
 - **Expo SDK 54** - Mobile app framework (React Native 0.81)
-- **Next.js 15** / **Tanstack Start** - Web application frameworks
+- **Next.js 15** - Web application framework
 - **Expo Router** - File-based routing for mobile
 - **NativeWind v5** - Tailwind CSS for React Native
 
@@ -73,7 +73,7 @@ The dual-platform approach leverages mobile devices for convenient menu photogra
 - **Monorepo structure** with clear package boundaries using Turborepo
 - **tRPC for end-to-end type safety** between client and server
 - **API package dependency strategy**:
-  - Production dependency in server apps (Next.js, Tanstack Start)
+  - Production dependency in server apps (Next.js)
   - Dev dependency in client apps (Expo) for type safety only
 - **Shared packages** for cross-app code:
   - `@acme/api` - API definitions
