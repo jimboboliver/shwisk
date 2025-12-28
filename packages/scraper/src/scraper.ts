@@ -113,19 +113,7 @@ export class WhiskyScraper {
   parseWhiskyPage(html: string, whiskyId: number): ScrapedWhiskyData | null {
     const $ = cheerio.load(html);
 
-    // Extract whisky ID (e.g., "WB1") - look for pattern like "WB1" or "WB123"
-    const whiskyIdMatch = /WB(\d+)/.exec(html);
-    const whiskyIdText = whiskyIdMatch ? `WB${whiskyIdMatch[1]}` : undefined;
-
-    if (!whiskyIdText) {
-      // Check if this is a 404 page
-      if (this.is404Page(html)) {
-        throw new Error("NOT_FOUND");
-      }
-      return null; // Invalid page
-    }
-
-    // Extract JSON data from Vue component attribute
+    // Extract JSON data from Vue component attribute first
     const jsonData = this.extractJsonData(html);
     if (!jsonData) {
       // Check if this is a 404 page
@@ -135,6 +123,27 @@ export class WhiskyScraper {
       return null; // Could not extract JSON data
     }
 
+    // Extract whisky ID from JSON data for verification
+    // But always use the whiskyId parameter as the source of truth for the database
+    const jsonWbid =
+      typeof jsonData.wbid === "number"
+        ? jsonData.wbid
+        : typeof jsonData.id === "number"
+          ? jsonData.id
+          : whiskyId;
+
+    // Verify the JSON wbid matches the expected whiskyId (sanity check)
+    if (jsonWbid !== whiskyId) {
+      // Log warning but continue - sometimes the JSON might have a different ID
+      console.warn(
+        `Whisky ID mismatch: expected ${whiskyId}, got ${jsonWbid} from JSON. Using ${whiskyId} as whisky_id.`,
+      );
+    }
+
+    // Always use the whiskyId parameter (from URL) as the source of truth
+    // This ensures whisky_id in the database matches the ID we're scraping
+    const whiskyIdText = `WB${whiskyId}`;
+
     // Extract name from JSON (fallback to h1 if not found)
     const name =
       typeof jsonData.name === "string"
@@ -142,24 +151,36 @@ export class WhiskyScraper {
         : $("h1").first().text().trim() || "";
 
     // Extract category from type
-    const category =
+    let category: string | undefined;
+    if (
       typeof jsonData.type === "object" &&
       jsonData.type !== null &&
-      "name" in jsonData.type &&
-      typeof jsonData.type.name === "string"
-        ? jsonData.type.name
-        : undefined;
+      "name" in jsonData.type
+    ) {
+      const typeName = (jsonData.type as { name: unknown }).name;
+      if (typeof typeName === "string") {
+        category = typeName;
+      }
+    }
 
     // Extract distillery from distilleries array
-    const distillery =
+    let distillery: string | undefined;
+    if (
       Array.isArray(jsonData.distilleries) &&
-      jsonData.distilleries.length > 0 &&
-      typeof jsonData.distilleries[0] === "object" &&
-      jsonData.distilleries[0] !== null &&
-      "name" in jsonData.distilleries[0] &&
-      typeof jsonData.distilleries[0].name === "string"
-        ? jsonData.distilleries[0].name
-        : undefined;
+      jsonData.distilleries.length > 0
+    ) {
+      const firstDistillery = jsonData.distilleries[0] as unknown;
+      if (
+        typeof firstDistillery === "object" &&
+        firstDistillery !== null &&
+        "name" in firstDistillery
+      ) {
+        const distilleryName = (firstDistillery as { name: unknown }).name;
+        if (typeof distilleryName === "string") {
+          distillery = distilleryName;
+        }
+      }
+    }
 
     // Extract bottler from original_bottling, mapping.basket.bottler, or simple_bottler
     // Check original_bottling first - if true, it's always a distillery bottling
@@ -228,13 +249,15 @@ export class WhiskyScraper {
         ? jsonData.serie.name
         : undefined;
 
-    // Extract vintage/bottled date
+    // Extract vintage (distillation date) - prioritize vintage over bottle_date
     const vintage =
+      typeof jsonData.vintage === "string" ? jsonData.vintage : undefined;
+
+    // Extract bottled date separately (bottling date, not vintage)
+    const bottledDate =
       typeof jsonData.bottle_date === "string"
         ? jsonData.bottle_date
-        : typeof jsonData.vintage === "string"
-          ? jsonData.vintage
-          : undefined;
+        : undefined;
 
     // Extract stated age
     const statedAge =
@@ -328,7 +351,7 @@ export class WhiskyScraper {
       bottler,
       bottlingSeries,
       vintage,
-      bottledDate: vintage, // Using vintage as bottled date for now
+      bottledDate, // Separate field for bottling date
       statedAge,
       caskType,
       strength,

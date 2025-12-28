@@ -1,13 +1,5 @@
 import { sql } from "drizzle-orm";
-import {
-  boolean,
-  customType,
-  integer,
-  numeric,
-  pgTable,
-  text,
-  timestamp,
-} from "drizzle-orm/pg-core";
+import { customType, pgTable } from "drizzle-orm/pg-core";
 
 // Custom vector type for pgvector
 const vector = customType<{ data: number[]; driverData: string }>({
