@@ -19,6 +19,7 @@ export interface WhiskyData {
   caskStrength?: boolean;
   numberOfBottles?: number;
   imageUrl?: string;
+  label?: string; // Label field from JSON (e.g., "Story No. 10")
 }
 
 export interface PricingData {

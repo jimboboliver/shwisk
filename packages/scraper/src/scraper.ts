@@ -150,6 +150,12 @@ export class WhiskyScraper {
         ? jsonData.name
         : $("h1").first().text().trim() || "";
 
+    // Extract label from JSON (separate from name)
+    const label =
+      typeof jsonData.label === "string" && jsonData.label
+        ? jsonData.label
+        : undefined;
+
     // Extract category from type
     let category: string | undefined;
     if (
@@ -359,6 +365,7 @@ export class WhiskyScraper {
       barcode,
       whiskyGroupId,
       imageUrl,
+      label,
     };
 
     return {

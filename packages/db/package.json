@@ -26,7 +26,8 @@
     "push": "pnpm with-env drizzle-kit push",
     "studio": "pnpm with-env drizzle-kit studio",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
-    "with-env": "dotenv -e ../../.env --"
+    "with-env": "dotenv -e ../../.env --",
+    "check-embeddings": "pnpm with-env tsx src/scripts/check-embeddings.ts"
   },
   "dependencies": {
     "@vercel/postgres": "^0.10.0",
@@ -41,6 +42,7 @@
     "drizzle-kit": "^0.31.5",
     "eslint": "catalog:",
     "prettier": "catalog:",
+    "tsx": "catalog:",
     "typescript": "catalog:"
   },
   "prettier": "@acme/prettier-config"

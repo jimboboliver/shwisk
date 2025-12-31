@@ -24,6 +24,7 @@ export const whisky = pgTable("whisky", (t) => ({
   size: t.text(), // e.g., "700ml"
   barcode: t.text(),
   whiskyGroupId: t.integer(), // Reference to whisky group
+  label: t.text(), // Label field from JSON (e.g., "Story No. 10")
   // Flags
   uncolored: t.boolean(),
   nonChillfiltered: t.boolean(),

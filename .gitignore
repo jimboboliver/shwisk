@@ -54,4 +54,4 @@ dist/
 # tanstack
 .tanstack
 
-packages/scraper/data/whisky/*.html
+packages/scraper/data
