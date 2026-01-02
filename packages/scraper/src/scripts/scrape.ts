@@ -1,13 +1,8 @@
 import * as cliProgress from "cli-progress";
-import { eq, inArray, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 
 import { db } from "@acme/db/client";
-import {
-  whisky,
-  whiskyPricing,
-  whiskyRating,
-  whiskyScrapingProgress,
-} from "@acme/db/schema";
+import { whisky } from "@acme/db/schema";
 
 import { WhiskyScraper } from "../scraper";
 
@@ -20,36 +15,10 @@ interface ScrapeOptions {
   concurrency?: number; // Number of parallel workers (default: 10, reduced to avoid DB connection limits)
 }
 
-async function updateProgress(
-  lastProcessedId: number,
-  status: string,
-  errorMessage?: string,
-): Promise<void> {
-  try {
-    await db
-      .update(whiskyScrapingProgress)
-      .set({
-        lastProcessedId,
-        status,
-        errorMessage,
-        updatedAt: new Date(),
-      })
-      .where(eq(whiskyScrapingProgress.id, 1));
-  } catch (error) {
-    // Silently fail progress updates - they're not critical
-    // Log only if it's not a circuit breaker error
-    if (error instanceof Error && !error.message.includes("Circuit breaker")) {
-      console.error("Error updating progress (non-critical):", error);
-    }
-    // Don't throw - progress updates are not critical for scraping
-  }
-}
-
 interface WhiskyData {
   whisky: {
     id: number;
     whiskyId: string;
-    name: string;
     category?: string;
     distillery?: string;
     bottler?: string;
@@ -92,18 +61,15 @@ class BatchBuffer {
   private readonly rawDataDir: string;
   private flushInterval: NodeJS.Timeout | null = null;
   private flushPromise: Promise<void> | null = null;
-  private onProgress?: (message: string) => void;
   private totalBatchesSaved = 0;
   private totalWhiskiesSaved = 0;
 
   constructor(
     batchSize = 25,
-    rawDataDir = "./data/whisky",
-    onProgress?: (message: string) => void,
+    rawDataDir = "C:/Users/james/Downloads/data/whisky",
   ) {
     this.batchSize = batchSize;
     this.rawDataDir = rawDataDir;
-    this.onProgress = onProgress;
   }
 
   add(data: WhiskyData): void {
@@ -112,9 +78,11 @@ class BatchBuffer {
 
     // Trigger flush if batch size reached, but don't wait for it
     if (this.buffer.length >= this.batchSize && !this.flushing) {
+      console.log("Flushing batch of", this.buffer.length, "whiskies");
       // Start flush asynchronously, don't await
       this.flush().catch((error) => {
         console.error("Error during batch flush:", error);
+        process.exit(1);
       });
     }
   }
@@ -124,6 +92,7 @@ class BatchBuffer {
       if (this.buffer.length > 0 && !this.flushing) {
         this.flush().catch((error) => {
           console.error("Error during auto-flush:", error);
+          process.exit(1);
         });
       }
     }, intervalMs);
@@ -156,17 +125,12 @@ class BatchBuffer {
     const batch = [...this.buffer];
     this.buffer = [];
 
-    // Capture batch number before async operation
-    const batchNumber = this.totalBatchesSaved + 1;
-
     this.flushPromise = (async () => {
       try {
-        await saveWhiskyDataBatch(batch, this.rawDataDir, (message) => {
-          this.onProgress?.(`[Batch ${batchNumber}] ${message}`);
-        });
+        await saveWhiskyDataBatch(batch, this.rawDataDir);
         this.totalBatchesSaved++;
         this.totalWhiskiesSaved += batch.length;
-        this.onProgress?.(
+        console.log(
           `Total saved: ${this.totalWhiskiesSaved} whiskies in ${this.totalBatchesSaved} batches`,
         );
       } finally {
@@ -205,30 +169,28 @@ class BatchBuffer {
 
 async function saveWhiskyDataBatch(
   batch: WhiskyData[],
-  rawDataDir = "./data/whisky",
-  onProgress?: (message: string) => void,
+  rawDataDir = "C:/Users/james/Downloads/data/whisky",
 ): Promise<void> {
   if (batch.length === 0) return;
 
   // Split large batches into smaller chunks to avoid stack overflow
-  const CHUNK_SIZE = 25;
+  const CHUNK_SIZE = 10;
   if (batch.length > CHUNK_SIZE) {
     // Process in chunks
     for (let i = 0; i < batch.length; i += CHUNK_SIZE) {
       const chunk = batch.slice(i, i + CHUNK_SIZE);
-      await saveWhiskyDataBatch(chunk, rawDataDir, onProgress);
+      await saveWhiskyDataBatch(chunk, rawDataDir);
     }
     return;
   }
 
-  onProgress?.(`Processing batch of ${batch.length} whiskies...`);
+  console.log(`Processing batch of ${batch.length} whiskies...`);
 
   // Batch insert/update whiskies
   // Note: Embeddings are generated separately using generate-embeddings script
   const whiskyValues = batch.map((data) => ({
     id: data.whisky.id,
     whiskyId: data.whisky.whiskyId,
-    name: data.whisky.name,
     category: data.whisky.category,
     distillery: data.whisky.distillery,
     bottler: data.whisky.bottler,
@@ -247,6 +209,16 @@ async function saveWhiskyDataBatch(
     caskStrength: data.whisky.caskStrength,
     numberOfBottles: data.whisky.numberOfBottles,
     imageUrl: data.whisky.imageUrl,
+    // Pricing fields
+    marketValue: data.pricing?.marketValue?.toString(),
+    marketValueCurrency: data.pricing?.marketValueCurrency,
+    marketValueDate: data.pricing?.marketValueDate,
+    retailPrice: data.pricing?.retailPrice?.toString(),
+    retailPriceCurrency: data.pricing?.retailPriceCurrency,
+    retailPriceDate: data.pricing?.retailPriceDate,
+    // Rating fields
+    averageRating: data.rating?.averageRating?.toString(),
+    numberOfRatings: data.rating?.numberOfRatings,
     embedding: null, // Embeddings generated separately
     updatedAt: new Date(),
   }));
@@ -259,7 +231,6 @@ async function saveWhiskyDataBatch(
       target: [whisky.id],
       set: {
         whiskyId: sql`excluded.whisky_id`,
-        name: sql`excluded.name`,
         category: sql`excluded.category`,
         distillery: sql`excluded.distillery`,
         bottler: sql`excluded.bottler`,
@@ -278,222 +249,22 @@ async function saveWhiskyDataBatch(
         caskStrength: sql`excluded.cask_strength`,
         numberOfBottles: sql`excluded.number_of_bottles`,
         imageUrl: sql`excluded.image_url`,
+        // Pricing fields
+        marketValue: sql`excluded.market_value`,
+        marketValueCurrency: sql`excluded.market_value_currency`,
+        marketValueDate: sql`excluded.market_value_date`,
+        retailPrice: sql`excluded.retail_price`,
+        retailPriceCurrency: sql`excluded.retail_price_currency`,
+        retailPriceDate: sql`excluded.retail_price_date`,
+        // Rating fields
+        averageRating: sql`excluded.average_rating`,
+        numberOfRatings: sql`excluded.number_of_ratings`,
         // embedding is not updated here - generated separately
         updatedAt: sql`now()`,
       },
     });
 
-  // Get existing pricing and rating records for batch
-  const whiskyIds = batch.map((data) => data.whisky.id);
-  const existingPricing = await db
-    .select()
-    .from(whiskyPricing)
-    .where(inArray(whiskyPricing.whiskyId, whiskyIds));
-  const existingRating = await db
-    .select()
-    .from(whiskyRating)
-    .where(inArray(whiskyRating.whiskyId, whiskyIds));
-
-  const existingPricingIds = new Set(existingPricing.map((p) => p.whiskyId));
-  const existingRatingIds = new Set(existingRating.map((r) => r.whiskyId));
-
-  // Batch update/insert pricing
-  const pricingToUpdate: (typeof whiskyPricing.$inferInsert)[] = [];
-  const pricingToInsert: (typeof whiskyPricing.$inferInsert)[] = [];
-
-  for (const data of batch) {
-    if (data.pricing) {
-      const pricingData = {
-        whiskyId: data.whisky.id,
-        marketValue: data.pricing.marketValue?.toString(),
-        marketValueCurrency: data.pricing.marketValueCurrency,
-        marketValueDate: data.pricing.marketValueDate,
-        retailPrice: data.pricing.retailPrice?.toString(),
-        retailPriceCurrency: data.pricing.retailPriceCurrency,
-        retailPriceDate: data.pricing.retailPriceDate,
-      };
-
-      if (existingPricingIds.has(data.whisky.id)) {
-        pricingToUpdate.push(pricingData);
-      } else {
-        pricingToInsert.push(pricingData);
-      }
-    }
-  }
-
-  // Batch update pricing
-  if (pricingToUpdate.length > 0) {
-    // Drizzle doesn't support batch updates directly, so we'll do them individually
-    // but in a transaction for better performance
-    await db.transaction(async (tx) => {
-      for (const pricing of pricingToUpdate) {
-        await tx
-          .update(whiskyPricing)
-          .set(pricing)
-          .where(eq(whiskyPricing.whiskyId, pricing.whiskyId));
-      }
-    });
-  }
-
-  // Batch insert pricing
-  if (pricingToInsert.length > 0) {
-    await db.insert(whiskyPricing).values(pricingToInsert);
-  }
-
-  // Batch update/insert rating
-  const ratingToUpdate: (typeof whiskyRating.$inferInsert)[] = [];
-  const ratingToInsert: (typeof whiskyRating.$inferInsert)[] = [];
-
-  for (const data of batch) {
-    if (data.rating) {
-      const ratingData = {
-        whiskyId: data.whisky.id,
-        averageRating: data.rating.averageRating?.toString(),
-        numberOfRatings: data.rating.numberOfRatings,
-      };
-
-      if (existingRatingIds.has(data.whisky.id)) {
-        ratingToUpdate.push(ratingData);
-      } else {
-        ratingToInsert.push(ratingData);
-      }
-    }
-  }
-
-  // Batch update rating
-  if (ratingToUpdate.length > 0) {
-    await db.transaction(async (tx) => {
-      for (const rating of ratingToUpdate) {
-        await tx
-          .update(whiskyRating)
-          .set(rating)
-          .where(eq(whiskyRating.whiskyId, rating.whiskyId));
-      }
-    });
-  }
-
-  // Batch insert rating
-  if (ratingToInsert.length > 0) {
-    await db.insert(whiskyRating).values(ratingToInsert);
-  }
-
-  onProgress?.(`Batch saved: ${batch.length} whiskies processed`);
-}
-
-// Legacy function - kept for reference but not used (replaced by batch operations)
-async function _saveWhiskyData(data: WhiskyData): Promise<void> {
-  // Insert or update whisky
-  await db
-    .insert(whisky)
-    .values({
-      id: data.whisky.id,
-      whiskyId: data.whisky.whiskyId,
-      name: data.whisky.name,
-      category: data.whisky.category,
-      distillery: data.whisky.distillery,
-      bottler: data.whisky.bottler,
-      bottlingSeries: data.whisky.bottlingSeries,
-      vintage: data.whisky.vintage,
-      bottledDate: data.whisky.bottledDate,
-      statedAge: data.whisky.statedAge,
-      caskType: data.whisky.caskType,
-      strength: data.whisky.strength?.toString(),
-      size: data.whisky.size,
-      barcode: data.whisky.barcode,
-      whiskyGroupId: data.whisky.whiskyGroupId,
-      uncolored: data.whisky.uncolored,
-      nonChillfiltered: data.whisky.nonChillfiltered,
-      caskStrength: data.whisky.caskStrength,
-      numberOfBottles: data.whisky.numberOfBottles,
-      imageUrl: data.whisky.imageUrl,
-    })
-    .onConflictDoUpdate({
-      target: [whisky.id],
-      set: {
-        whiskyId: data.whisky.whiskyId,
-        name: data.whisky.name,
-        category: data.whisky.category,
-        distillery: data.whisky.distillery,
-        bottler: data.whisky.bottler,
-        bottlingSeries: data.whisky.bottlingSeries,
-        vintage: data.whisky.vintage,
-        bottledDate: data.whisky.bottledDate,
-        statedAge: data.whisky.statedAge,
-        caskType: data.whisky.caskType,
-        strength: data.whisky.strength?.toString(),
-        size: data.whisky.size,
-        barcode: data.whisky.barcode,
-        whiskyGroupId: data.whisky.whiskyGroupId,
-        uncolored: data.whisky.uncolored,
-        nonChillfiltered: data.whisky.nonChillfiltered,
-        caskStrength: data.whisky.caskStrength,
-        numberOfBottles: data.whisky.numberOfBottles,
-        imageUrl: data.whisky.imageUrl,
-        updatedAt: new Date(),
-      },
-    });
-
-  // Update or insert pricing data
-  if (data.pricing) {
-    const existingPricing = await db
-      .select()
-      .from(whiskyPricing)
-      .where(eq(whiskyPricing.whiskyId, data.whisky.id))
-      .limit(1);
-
-    if (existingPricing.length > 0) {
-      // Update existing record
-      await db
-        .update(whiskyPricing)
-        .set({
-          marketValue: data.pricing.marketValue?.toString(),
-          marketValueCurrency: data.pricing.marketValueCurrency,
-          marketValueDate: data.pricing.marketValueDate,
-          retailPrice: data.pricing.retailPrice?.toString(),
-          retailPriceCurrency: data.pricing.retailPriceCurrency,
-          retailPriceDate: data.pricing.retailPriceDate,
-        })
-        .where(eq(whiskyPricing.whiskyId, data.whisky.id));
-    } else {
-      // Insert new record
-      await db.insert(whiskyPricing).values({
-        whiskyId: data.whisky.id,
-        marketValue: data.pricing.marketValue?.toString(),
-        marketValueCurrency: data.pricing.marketValueCurrency,
-        marketValueDate: data.pricing.marketValueDate,
-        retailPrice: data.pricing.retailPrice?.toString(),
-        retailPriceCurrency: data.pricing.retailPriceCurrency,
-        retailPriceDate: data.pricing.retailPriceDate,
-      });
-    }
-  }
-
-  // Update or insert rating data
-  if (data.rating) {
-    const existingRating = await db
-      .select()
-      .from(whiskyRating)
-      .where(eq(whiskyRating.whiskyId, data.whisky.id))
-      .limit(1);
-
-    if (existingRating.length > 0) {
-      // Update existing record
-      await db
-        .update(whiskyRating)
-        .set({
-          averageRating: data.rating.averageRating?.toString(),
-          numberOfRatings: data.rating.numberOfRatings,
-        })
-        .where(eq(whiskyRating.whiskyId, data.whisky.id));
-    } else {
-      // Insert new record
-      await db.insert(whiskyRating).values({
-        whiskyId: data.whisky.id,
-        averageRating: data.rating.averageRating?.toString(),
-        numberOfRatings: data.rating.numberOfRatings,
-      });
-    }
-  }
+  console.log(`Batch saved: ${batch.length} whiskies processed`);
 }
 
 /**
@@ -506,10 +277,7 @@ async function findMaxWhiskyId(
 ): Promise<number> {
   console.log("Finding maximum whisky ID...");
 
-  // More rigorous approach: require both consecutive 404s AND high 404 rate in window
   const minConsecutive404s = 3000; // Require 3000 consecutive 404s
-  const windowSize = 4500; // Check last 4500 IDs (must be >= minConsecutive404s)
-  const min404Rate = 0.95; // Require 95% 404 rate in window
 
   // First, use exponential search to find an upper bound
   let upperBound = startId;
@@ -525,7 +293,7 @@ async function findMaxWhiskyId(
       // Found a valid ID
       consecutive404s = 0;
       recentResults.push(false); // false = not a 404
-      if (recentResults.length > windowSize) {
+      if (recentResults.length > minConsecutive404s) {
         recentResults.shift(); // Keep only last windowSize results
       }
       lastValidId = upperBound;
@@ -543,23 +311,15 @@ async function findMaxWhiskyId(
       if (error instanceof Error && error.message === "NOT_FOUND") {
         consecutive404s++;
         recentResults.push(true); // true = 404
-        if (recentResults.length > windowSize) {
+        if (recentResults.length > minConsecutive404s) {
           recentResults.shift();
         }
 
         // Check if we meet the rigorous criteria
         const hasEnoughConsecutive = consecutive404s >= minConsecutive404s;
-        const recent404Rate =
-          recentResults.length >= windowSize
-            ? recentResults.filter((r) => r).length / recentResults.length
-            : 0;
-        const hasHigh404Rate = recent404Rate >= min404Rate;
 
-        if (hasEnoughConsecutive && hasHigh404Rate) {
-          // We've met both criteria - this is likely the end
-          console.log(
-            `Found ${consecutive404s} consecutive 404s with ${(recent404Rate * 100).toFixed(1)}% 404 rate in last ${recentResults.length} IDs`,
-          );
+        if (hasEnoughConsecutive) {
+          console.log(`Found ${consecutive404s} consecutive 404s`);
           // Back up to the last known valid ID
           upperBound = lastValidId;
           break;
@@ -585,7 +345,7 @@ async function findMaxWhiskyId(
         // Non-404 error, try next ID
         consecutive404s = 0;
         recentResults.push(false);
-        if (recentResults.length > windowSize) {
+        if (recentResults.length > minConsecutive404s) {
           recentResults.shift();
         }
         upperBound++;
@@ -611,7 +371,7 @@ async function findMaxWhiskyId(
       maxValidId = mid;
       binarySearch404s = 0;
       binarySearchWindow.push(false);
-      if (binarySearchWindow.length > windowSize) {
+      if (binarySearchWindow.length > minConsecutive404s) {
         binarySearchWindow.shift();
       }
       left = mid + 1; // Search in the upper half
@@ -619,25 +379,12 @@ async function findMaxWhiskyId(
       if (error instanceof Error && error.message === "NOT_FOUND") {
         binarySearch404s++;
         binarySearchWindow.push(true);
-        if (binarySearchWindow.length > windowSize) {
+        if (binarySearchWindow.length > minConsecutive404s) {
           binarySearchWindow.shift();
         }
 
-        // Check if we've found the true end using rigorous criteria
-        const recent404Rate =
-          binarySearchWindow.length >= windowSize
-            ? binarySearchWindow.filter((r) => r).length /
-              binarySearchWindow.length
-            : 0;
-
-        if (
-          binarySearch404s >= minConsecutive404s &&
-          recent404Rate >= min404Rate
-        ) {
-          // We've confirmed the end - this ID and above don't exist
-          console.log(
-            `Confirmed end: ${binarySearch404s} consecutive 404s with ${(recent404Rate * 100).toFixed(1)}% 404 rate`,
-          );
+        if (binarySearch404s >= minConsecutive404s) {
+          console.log(`Confirmed end: ${binarySearch404s} consecutive 404s`);
           break;
         }
 
@@ -647,7 +394,7 @@ async function findMaxWhiskyId(
         // Non-404 error, try next ID
         binarySearch404s = 0;
         binarySearchWindow.push(false);
-        if (binarySearchWindow.length > windowSize) {
+        if (binarySearchWindow.length > minConsecutive404s) {
           binarySearchWindow.shift();
         }
         left = mid + 1;
@@ -666,13 +413,13 @@ async function scrape(options: ScrapeOptions = {}): Promise<void> {
     dryRun = false,
     estimatedMaxId = 291265, // Default estimate for progress bar
     findMaxId = false, // Find max ID automatically
-    concurrency = 10, // Number of parallel workers (reduced to avoid DB connection limits)
+    concurrency = 10, // Number of parallel workers
   } = options;
 
   // Create scraper for finding max ID (still sequential for that)
   const findMaxScraper = new WhiskyScraper({
     rateLimitDelay: 0,
-    rawDataDir: "./data/whisky",
+    rawDataDir: "C:/Users/james/Downloads/data/whisky",
   });
 
   // Find max ID if requested
@@ -683,11 +430,6 @@ async function scrape(options: ScrapeOptions = {}): Promise<void> {
 
   const startIdForProgress = startId;
   const progressMaxId = actualMaxId ?? estimatedMaxId;
-
-  // Update status to running
-  if (!dryRun) {
-    await updateProgress(startId - 1, "running");
-  }
 
   console.log(
     `Starting scrape from ID ${startIdForProgress}${actualMaxId ? ` to ${actualMaxId}` : ""} with ${concurrency} parallel workers...`,
@@ -717,24 +459,19 @@ async function scrape(options: ScrapeOptions = {}): Promise<void> {
   let nextId = startId;
 
   const minConsecutive404s = 3000;
-  const windowSize = 4500; // Must be >= minConsecutive404s to detect consecutive pattern
-  const min404Rate = 0.95;
 
   // Create batch buffer for database operations
-  const rawDataDir = "./data/whisky";
-  const batchBuffer = new BatchBuffer(50, rawDataDir, (message) => {
-    // Log batch progress below the progress bar
-    console.log(`\n${message}`);
-  }); // Batch size of 50
+  const rawDataDir = "C:/Users/james/Downloads/data/whisky";
+  const batchBuffer = new BatchBuffer(100, rawDataDir); // Batch size of 100
   if (!dryRun) {
-    batchBuffer.startAutoFlush(10000); // Auto-flush every 10 seconds (reduced frequency to avoid DB load)
+    batchBuffer.startAutoFlush(10000); // Auto-flush every 10 seconds
   }
 
   // Worker function
   const worker = async (_workerId: number) => {
     const scraper = new WhiskyScraper({
       rateLimitDelay: 0, // No rate limiting
-      rawDataDir: "./data/whisky",
+      rawDataDir: "C:/Users/james/Downloads/data/whisky",
     });
 
     while (!shouldStop) {
@@ -766,9 +503,6 @@ async function scrape(options: ScrapeOptions = {}): Promise<void> {
         progressBar.update(processedCount, {
           activeWorkers: concurrency,
         });
-
-        // Progress updates disabled during active scraping to avoid circuit breaker issues
-        // Progress will only be updated at the end
       } catch (error) {
         if (error instanceof Error && error.message === "NOT_FOUND") {
           results.push({ id: currentId, is404: true });
@@ -783,12 +517,10 @@ async function scrape(options: ScrapeOptions = {}): Promise<void> {
       }
 
       // Check stopping conditions periodically (only check when we have enough results)
-      if (results.length >= windowSize) {
+      if (results.length >= minConsecutive404s) {
         // Sort results by ID to check consecutive 404s properly
         const sortedResults = [...results].sort((a, b) => a.id - b.id);
-        const recentResults = sortedResults.slice(-windowSize);
-        const recent404s = recentResults.filter((r) => r.is404);
-        const recent404Rate = recent404s.length / recentResults.length;
+        const recentResults = sortedResults.slice(-minConsecutive404s);
 
         // Check for consecutive 404s at the end (most recent)
         let consecutive404s = 0;
@@ -800,13 +532,10 @@ async function scrape(options: ScrapeOptions = {}): Promise<void> {
           }
         }
 
-        if (
-          consecutive404s >= minConsecutive404s &&
-          recent404Rate >= min404Rate
-        ) {
+        if (consecutive404s >= minConsecutive404s) {
           shouldStop = true;
           console.log(
-            `\nReached ${consecutive404s} consecutive 404s with ${(recent404Rate * 100).toFixed(1)}% 404 rate, stopping`,
+            `\nReached ${consecutive404s} consecutive 404s, stopping`,
           );
           break;
         }
@@ -837,7 +566,6 @@ async function scrape(options: ScrapeOptions = {}): Promise<void> {
         console.error("Error flushing final batch:", error);
         // Continue anyway - some data may have been saved
       }
-      await updateProgress(maxProcessedId, "completed");
     }
 
     console.log(
@@ -854,15 +582,6 @@ async function scrape(options: ScrapeOptions = {}): Promise<void> {
       } catch (flushError) {
         console.error("Error flushing batch buffer:", flushError);
       }
-      const maxProcessedId =
-        results.length > 0
-          ? Math.max(...results.map((r) => r.id))
-          : startId - 1;
-      await updateProgress(
-        maxProcessedId,
-        "error",
-        error instanceof Error ? error.message : String(error),
-      );
     }
     throw error;
   }

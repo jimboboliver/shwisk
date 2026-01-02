@@ -55,3 +55,5 @@ dist/
 .tanstack
 
 packages/scraper/data
+
+*.png

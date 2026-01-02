@@ -19,7 +19,7 @@ export interface ScraperConfig {
 const DEFAULT_CONFIG: Required<ScraperConfig> = {
   baseUrl: "https://www.whiskystats.com",
   rateLimitDelay: 2000, // 2 seconds
-  rawDataDir: "./data/whisky",
+  rawDataDir: "C:/Users/james/Downloads/data/whisky",
   userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
 };
 

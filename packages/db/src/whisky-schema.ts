@@ -11,7 +11,6 @@ const vector = customType<{ data: number[]; driverData: string }>({
 export const whisky = pgTable("whisky", (t) => ({
   id: t.integer().notNull().primaryKey(),
   whiskyId: t.text().notNull().unique(), // e.g., "WB1"
-  name: t.text().notNull(),
   category: t.text(), // e.g., "Single Malt"
   distillery: t.text(),
   bottler: t.text(),
@@ -32,6 +31,16 @@ export const whisky = pgTable("whisky", (t) => ({
   // Metadata
   numberOfBottles: t.integer(),
   imageUrl: t.text(),
+  // Pricing fields
+  marketValue: t.text(), // Market value amount - stored as text for precision
+  marketValueCurrency: t.text().default("EUR"), // Currency code
+  marketValueDate: t.timestamp(), // Date of market value
+  retailPrice: t.text(), // Retail price amount - stored as text for precision
+  retailPriceCurrency: t.text().default("EUR"), // Currency code
+  retailPriceDate: t.timestamp(), // Date of retail price
+  // Rating fields
+  averageRating: t.text(), // Average rating score (0-100) - stored as text for precision
+  numberOfRatings: t.integer(), // Total number of ratings
   // Vector embedding for semantic search (e.g., OpenAI embeddings)
   // This will be generated from the whisky name + description fields
   embedding: vector("embedding"),
@@ -39,32 +48,6 @@ export const whisky = pgTable("whisky", (t) => ({
   updatedAt: t
     .timestamp({ mode: "date", withTimezone: true })
     .$onUpdateFn(() => sql`now()`),
-}));
-
-export const whiskyPricing = pgTable("whisky_pricing", (t) => ({
-  id: t.uuid().notNull().primaryKey().defaultRandom(),
-  whiskyId: t
-    .integer()
-    .notNull()
-    .references(() => whisky.id, { onDelete: "cascade" }),
-  marketValue: t.text(), // Market value amount - stored as text for precision
-  marketValueCurrency: t.text().default("EUR"), // Currency code
-  marketValueDate: t.timestamp(), // Date of market value
-  retailPrice: t.text(), // Retail price amount - stored as text for precision
-  retailPriceCurrency: t.text().default("EUR"), // Currency code
-  retailPriceDate: t.timestamp(), // Date of retail price
-  createdAt: t.timestamp().defaultNow().notNull(),
-}));
-
-export const whiskyRating = pgTable("whisky_rating", (t) => ({
-  id: t.uuid().notNull().primaryKey().defaultRandom(),
-  whiskyId: t
-    .integer()
-    .notNull()
-    .references(() => whisky.id, { onDelete: "cascade" }),
-  averageRating: t.text(), // Average rating score (0-100) - stored as text for precision
-  numberOfRatings: t.integer(), // Total number of ratings
-  scrapedAt: t.timestamp().defaultNow().notNull(),
 }));
 
 export const whiskyScrapingProgress = pgTable(

@@ -154,8 +154,7 @@ async function main() {
         }
         console.log(`   Matches: ${item.matches.length}`);
 
-        item.matches.forEach((match, j) => {
-          console.log(`   ${j + 1}. ${match.name ?? "Unknown"}`);
+        item.matches.forEach((match) => {
           if (match.distillery) {
             console.log(`      Distillery: ${match.distillery}`);
           }

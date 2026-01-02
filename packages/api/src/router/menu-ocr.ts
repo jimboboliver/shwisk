@@ -8,7 +8,7 @@ import OpenAI from "openai";
 import { z } from "zod/v4";
 
 import { ilike, or, sql } from "@acme/db";
-import { whisky, whiskyPricing } from "@acme/db/schema";
+import { whisky } from "@acme/db/schema";
 
 import type { createTRPCContext } from "../trpc";
 import { apiEnv } from "../env";
@@ -151,7 +151,6 @@ async function searchWhiskies(
   {
     id: number;
     whiskyId: string;
-    name: string | null;
     distillery: string | null;
     category: string | null;
     size: string | null;
@@ -181,18 +180,16 @@ async function searchWhiskies(
         .select({
           id: whisky.id,
           whiskyId: whisky.whiskyId,
-          name: whisky.name,
           distillery: whisky.distillery,
           category: whisky.category,
           size: whisky.size,
-          retailPrice: whiskyPricing.retailPrice,
-          retailPriceCurrency: whiskyPricing.retailPriceCurrency,
-          marketValue: whiskyPricing.marketValue,
-          marketValueCurrency: whiskyPricing.marketValueCurrency,
+          retailPrice: whisky.retailPrice,
+          retailPriceCurrency: whisky.retailPriceCurrency,
+          marketValue: whisky.marketValue,
+          marketValueCurrency: whisky.marketValueCurrency,
           distance: sql<number>`${whisky.embedding} <=> ${JSON.stringify(embedding)}::vector`,
         })
         .from(whisky)
-        .leftJoin(whiskyPricing, sql`${whisky.id} = ${whiskyPricing.whiskyId}`)
         .where(sql`${whisky.embedding} IS NOT NULL`)
         .orderBy(
           sql`${whisky.embedding} <=> ${JSON.stringify(embedding)}::vector`,
@@ -208,9 +205,7 @@ async function searchWhiskies(
         .filter((result) => result.similarityScore >= MIN_SIMILARITY_THRESHOLD);
 
       if (resultsWithSimilarity.length > 0) {
-        return resultsWithSimilarity.map(
-          ({ distance: _distance, ...rest }) => rest,
-        );
+        return resultsWithSimilarity.map(({ distance: _, ...rest }) => rest);
       }
     } catch (error) {
       console.error("Vector search error, falling back to text search:", error);
@@ -230,7 +225,6 @@ async function searchWhiskies(
   // Build search conditions - match against name, distillery, or category
   const conditions = words.map((word) =>
     or(
-      ilike(whisky.name, `%${word}%`),
       ilike(whisky.distillery, `%${word}%`),
       ilike(whisky.category, `%${word}%`),
     ),
@@ -240,17 +234,15 @@ async function searchWhiskies(
     .select({
       id: whisky.id,
       whiskyId: whisky.whiskyId,
-      name: whisky.name,
       distillery: whisky.distillery,
       category: whisky.category,
       size: whisky.size,
-      retailPrice: whiskyPricing.retailPrice,
-      retailPriceCurrency: whiskyPricing.retailPriceCurrency,
-      marketValue: whiskyPricing.marketValue,
-      marketValueCurrency: whiskyPricing.marketValueCurrency,
+      retailPrice: whisky.retailPrice,
+      retailPriceCurrency: whisky.retailPriceCurrency,
+      marketValue: whisky.marketValue,
+      marketValueCurrency: whisky.marketValueCurrency,
     })
     .from(whisky)
-    .leftJoin(whiskyPricing, sql`${whisky.id} = ${whiskyPricing.whiskyId}`)
     .where(or(...conditions))
     .limit(limit);
 
@@ -379,7 +371,6 @@ export const menuOcrRouter = {
             (match: {
               id: number;
               whiskyId: string;
-              name: string | null;
               distillery: string | null;
               category: string | null;
               size: string | null;
@@ -411,7 +402,6 @@ export const menuOcrRouter = {
               return {
                 whiskyId: match.id,
                 whiskyDbId: match.whiskyId,
-                name: match.name,
                 distillery: match.distillery,
                 category: match.category,
                 bottleSize: match.size,

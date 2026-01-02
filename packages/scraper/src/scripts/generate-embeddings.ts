@@ -111,7 +111,7 @@ async function generateEmbeddingsForWhiskies(
 ): Promise<void> {
   const { batchSize = 25, limit, startId, dryRun = false } = options;
 
-  const rawDataDir = "./data/whisky";
+  const rawDataDir = "C:/Users/james/Downloads/data/whisky";
 
   console.log("Finding whiskies without embeddings...");
 
@@ -125,7 +125,6 @@ async function generateEmbeddingsForWhiskies(
     .select({
       id: whisky.id,
       whiskyId: whisky.whiskyId,
-      name: whisky.name,
       distillery: whisky.distillery,
       vintage: whisky.vintage,
       statedAge: whisky.statedAge,

@@ -47,7 +47,6 @@ async function checkEmbeddings() {
         .select({
           id: whisky.id,
           whiskyId: whisky.whiskyId,
-          name: whisky.name,
         })
         .from(whisky)
         .where(sql`${whisky.embedding} IS NOT NULL`)
@@ -55,7 +54,7 @@ async function checkEmbeddings() {
 
       console.log("Sample records WITH embeddings:");
       sampleWith.forEach((w) => {
-        console.log(`  - ${w.whiskyId}: ${w.name}`);
+        console.log(`  - ${w.whiskyId}`);
       });
       console.log("\n");
     }
@@ -65,7 +64,6 @@ async function checkEmbeddings() {
         .select({
           id: whisky.id,
           whiskyId: whisky.whiskyId,
-          name: whisky.name,
         })
         .from(whisky)
         .where(sql`${whisky.embedding} IS NULL`)
@@ -73,7 +71,7 @@ async function checkEmbeddings() {
 
       console.log("Sample records WITHOUT embeddings:");
       sampleWithout.forEach((w) => {
-        console.log(`  - ${w.whiskyId}: ${w.name}`);
+        console.log(`  - ${w.whiskyId}`);
       });
       console.log("\n");
     }

@@ -3,7 +3,7 @@
 - [ ] 1.1 Verify OpenAI API key is available in scraper environment
 - [ ] 1.2 Check if OpenAI SDK is already available in scraper package
 - [ ] 1.3 Review embedding text format requirements and clarify "label" field mapping (likely maps to `name` field)
-- [ ] 1.4 Review raw data directory structure (`./data/whisky/`)
+- [ ] 1.4 Review raw data directory structure (`C:/Users/james/Downloads/data/whisky/`)
 
 ## 2. Embedding Text Generation
 
@@ -22,7 +22,7 @@
 
 ## 4. Local Embedding Storage
 
-- [ ] 4.1 Add method to save embeddings to disk as JSON files (e.g., `{whiskyId}.embedding.json`) in `./data/whisky/` directory
+- [ ] 4.1 Add method to save embeddings to disk as JSON files (e.g., `{whiskyId}.embedding.json`) in `C:/Users/james/Downloads/data/whisky/` directory
 - [ ] 4.2 Add method to load embeddings from disk if file exists
 - [ ] 4.3 Handle file I/O errors gracefully (log and continue)
 - [ ] 4.4 Ensure embedding storage is non-blocking (similar to raw HTML storage)

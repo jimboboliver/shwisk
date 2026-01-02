@@ -41,12 +41,12 @@ The system SHALL store raw scraped HTML data on disk for backup, debugging, and 
 #### Scenario: Organize raw data files
 
 - **WHEN** storing raw data files
-- **THEN** the system organizes files in a directory structure that allows easy lookup by whisky ID (e.g., `data/whisky/{id}.html`)
+- **THEN** the system organizes files in a directory structure that allows easy lookup by whisky ID (e.g., `C:/Users/james/Downloads/data/whisky/{id}.html`)
 
 #### Scenario: Store embeddings alongside raw data
 
 - **WHEN** an embedding is generated for a whisky
-- **THEN** the system saves the embedding as a JSON file in the same directory as the raw HTML (e.g., `data/whisky/{id}.embedding.json`)
+- **THEN** the system saves the embedding as a JSON file in the same directory as the raw HTML (e.g., `C:/Users/james/Downloads/data/whisky/{id}.embedding.json`)
 
 #### Scenario: Handle raw data storage errors
 

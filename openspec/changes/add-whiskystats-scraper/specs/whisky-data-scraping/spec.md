@@ -126,7 +126,7 @@ The system SHALL store raw scraped HTML data on disk for backup, debugging, and 
 #### Scenario: Organize raw data files
 
 - **WHEN** storing raw data files
-- **THEN** the system organizes files in a directory structure that allows easy lookup by whisky ID (e.g., `data/whisky/{id}.html`)
+- **THEN** the system organizes files in a directory structure that allows easy lookup by whisky ID (e.g., `C:/Users/james/Downloads/data/whisky/{id}.html`)
 
 #### Scenario: Handle raw data storage errors
 

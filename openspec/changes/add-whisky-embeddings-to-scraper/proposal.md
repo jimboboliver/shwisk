@@ -23,4 +23,4 @@ The menu OCR API uses vector search to match extracted menu text to whisky recor
   - `packages/scraper/src/` - Add OpenAI client initialization and embedding generation utilities
   - `packages/scraper/package.json` - Add OpenAI SDK dependency
   - Environment configuration - OpenAI API key required for scraper
-  - Local storage - Embedding JSON files stored in `./data/whisky/` directory alongside HTML files
+  - Local storage - Embedding JSON files stored in `C:/Users/james/Downloads/data/whisky/` directory alongside HTML files

@@ -29,7 +29,6 @@ export async function findSimilarWhiskies(
     .select({
       id: whisky.id,
       whiskyId: whisky.whiskyId,
-      name: whisky.name,
       distillery: whisky.distillery,
       category: whisky.category,
       similarity: vectorCosineSimilarity(whisky.embedding, queryEmbedding),
